@@ -1,0 +1,87 @@
+from pygame import *
+from random import randint
+
+
+window = display.set_mode((700, 500))
+display.set_caption('tennis')
+clock = time.Clock()
+FPS = 60
+backgroung = transform.scale(image.load('fon.jpg'), (700, 500))
+#класси
+class GameSprite(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, player_speed,player_speed_2):
+        super().__init__()
+        self.image= transform.scale(image.load(player_image), (30, 85))
+        self.speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+    def reset(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
+
+class Player(GameSprite):
+    def update_1(self):
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_w]and self.rect.y > 0:
+            self.rect.y -= 10
+        if keys_pressed[K_s] and self.rect.y < 435:
+            self.rect.y += 10
+    def update_2(self):
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_UP] and self.rect.y > 0:
+            self.rect.y -= 10
+        if keys_pressed[K_DOWN] and self.rect.y < 435:
+            self.rect.y += 10
+player_1=Player('rok1.png', 50, 125, 2,2)
+player_2=Player('rok2.png', 625, 125, 2,2)
+class Enemy(GameSprite):
+    def update(self):
+        
+        if self.rect.y>500:
+            self.rect.y=0
+            self.rect.x=randint(0,700)
+shar = Enemy('ball.png',300,250,2,2)
+
+
+
+    
+
+
+
+
+
+
+
+speed_x = 3
+speed_y = 3
+
+
+
+
+finish = False
+game = True
+while game:
+    
+        
+
+
+    window.blit(backgroung,(0, 0))
+    player_1.update_1()
+    player_1.reset()
+    player_2.update_2()
+    player_2.reset()
+    shar.update()
+    shar.reset()
+    if finish != True:
+        shar.rect.x += speed_x
+        shar.rect.y += speed_y
+    if shar.rect.y > 500-50 or shar.rect.y < 0:
+        speed_y *= -1
+    if sprite.collide_rect(player_1,shar) or sprite.collide_rect(player_2,shar):
+        speed_x *= -1
+    for e in event.get():
+        if e.type == QUIT:
+            game = False
+    clock.tick(FPS)
+    display.update()
